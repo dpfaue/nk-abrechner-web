@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rechner: Nebenkostenabrechnung erstellen – NK-Abrechner</title>
+<meta name="description" content="Nebenkostenabrechnung für Ihre Mieter direkt im Browser erstellen: Wohnfläche, Personen, Verbrauch, Heizkosten, Mieterwechsel. Kostenlos rechnen, PDF für 14,90 €.">
+<link rel="canonical" href="https://nk-abrechner.de/app.html">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css?v=1">
+</head>
+<body class="app">
+<header class="top"><div class="wrap"><a class="logo" href="/">NK-<span>Abrechner</span></a>
+<span class="note" id="saveState">Daten bleiben auf Ihrem Gerät</span></div></header>
+<main><div class="wrap">
+  <div class="toolbar">
+    <button class="btn small sec" id="bDemo" type="button">Beispiel laden</button>
+    <button class="btn small sec" id="bNeu" type="button">Neu beginnen</button>
+    <button class="btn small sec" id="bExport" type="button">Daten sichern (Datei)</button>
+    <label class="btn small sec" style="margin:0">Daten laden<input type="file" id="fImport" accept=".json,application/json" hidden></label>
+  </div>
+  <div id="demoHinweis" class="warnbox hidden" style="margin-bottom:14px">Sie sehen ein <b>Beispiel</b> mit erfundenen Daten. Schauen Sie sich unten das Ergebnis und das Muster-PDF an – mit „Neu beginnen“ geben Sie Ihre eigenen Daten ein.</div>
+
+  <details class="step" id="s1" open><summary><span class="nr">1</span>Vermieter, Objekt &amp; Zeitraum<span class="info" id="i1"></span></summary><div class="body" id="b1"></div></details>
+  <details class="step" id="s2"><summary><span class="nr">2</span>Wohnungen<span class="info" id="i2"></span></summary><div class="body" id="b2"></div></details>
+  <details class="step" id="s3"><summary><span class="nr">3</span>Mieter &amp; Vorauszahlungen<span class="info" id="i3"></span></summary><div class="body" id="b3"></div></details>
+  <details class="step" id="s4"><summary><span class="nr">4</span>Kosten des Hauses<span class="info" id="i4"></span></summary><div class="body" id="b4"></div></details>
+  <details class="step" id="s5" open><summary><span class="nr">5</span>Ergebnis &amp; PDF<span class="info" id="i5"></span></summary><div class="body">
+    <div id="ergebnis"></div>
+    <div class="dl" id="dl"></div>
+    <div id="lizenzBox"></div>
+  </div></details>
+  <p class="note">Hinweis: Der Rechner verteilt Ihre Kosten nach den gewählten Schlüsseln und erstellt die Abrechnung. Ob eine Kostenart umlagefähig und im Mietvertrag vereinbart ist, prüfen Sie bitte selbst (Betriebskostenverordnung). Keine Rechtsberatung.</p>
+</div></main>
+<footer><div class="wrap"><a href="impressum.html">Impressum</a><a href="datenschutz.html">Datenschutz</a><a href="agb.html">AGB</a><a href="widerruf.html">Widerrufsbelehrung</a><a href="mailto:kontakt@nk-abrechner.de">kontakt@nk-abrechner.de</a>
+<br><br>Alle Preise Endpreise; gemäß § 19 UStG wird keine Umsatzsteuer berechnet.</div>
+<div style="text-align:center;margin:18px 0 6px"><a href="widerrufen.html" style="display:inline-block;padding:9px 18px;border:1.5px solid currentColor;border-radius:999px;font-weight:700;text-decoration:none">Vertrag widerrufen</a></div></footer>
+<script src="config.js?v=1"></script>
+<script src="calc.js?v=1"></script>
+<script src="vendor/jspdf.umd.min.js" defer></script>
+<script src="vendor/jspdf.plugin.autotable.min.js" defer></script>
+<script src="pdf.js?v=1" defer></script>
+<script src="app.js?v=1" defer></script>
+</body></html>
