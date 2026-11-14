@@ -140,7 +140,7 @@
       r.co2.forEach(c => {
         y = absatz(doc, 'Der CO2-Ausstoß des Gebäudes beträgt ' + zahl(c.kgm2, 1) + ' kg CO2 je m² Wohnfläche und Jahr (Stufe ' + c.stufe + ' von 10 nach der Anlage zum CO2KostAufG). ' +
           'Von den CO2-Kosten in Höhe von ' + eur(c.kosten) + ' trägt der Vermieter ' + c.vProz + ' % = ' + eur(c.vermieter) + '; dieser Betrag wurde vor der Verteilung von den ' + c.art + ' abgezogen. ' +
-          'Auf Sie entfallen ' + eur(c.ihrAnteil) + ' CO2-Kosten (in Ihrem Heizkostenanteil enthalten). Berechnungsgrundlage: Brennstoffrechnung (CO2-Menge und CO2-Kosten) und Gesamtwohnfläche.', y - 1, 8.6);
+          'Auf Sie entfallen ' + eur(c.ihrAnteil) + ' CO2-Kosten (in Ihrem Heizkostenanteil enthalten). Berechnungsgrundlage: Angaben des Brennstoff- bzw. Wärmelieferanten (CO2-Menge und CO2-Kosten) und die Gesamtwohnfläche des Gebäudes.', y - 1, 8.6);
       });
     }
 

@@ -79,7 +79,7 @@
       '<h3 style="margin-top:18px">Abrechnungszeitraum</h3><div class="f">' +
       inp('zeitraum.von', 'von', { type: 'date', rr: 'all' }) + inp('zeitraum.bis', 'bis', { type: 'date', rr: 'all' }) +
       inp('optionen.zahlungsziel', 'Zahlungsziel (Tage)', { num: true }) +
-      inp('optionen.anpassungAb', 'Neue Vorauszahlung ab (optional)', { type: 'date', rr: 'all', hint: 'Wenn gesetzt, steht in jeder Abrechnung die angepasste monatliche Vorauszahlung (Vorschlag automatisch, bei den Mietern änderbar).' }) + '</div>' +
+      inp('optionen.anpassungAb', 'Neue Vorauszahlung ab (optional)', { type: 'date', rr: 'all', hint: 'Wenn gesetzt, steht in jeder Abrechnung die angepasste monatliche Vorauszahlung (§ 560 Abs. 4 BGB; Vorschlag automatisch, bei den Mietern änderbar). Gilt frühestens ab der nächsten Mietzahlung nach Zugang der Abrechnung.' }) + '</div>' +
       '<p class="hint">Die Abrechnung muss dem Mieter spätestens 12 Monate nach Ende des Zeitraums zugehen (§ 556 Abs. 3 BGB) – für 2025 also bis 31.12.2026.</p>';
     info();
   }
@@ -148,11 +148,11 @@
       if (k.schluessel === 'verbrauch' || k.schluessel === 'heizung') {
         h += sel('kosten.' + i + '.zaehlerId', 'Zähler', S.zaehler.length ? S.zaehler.map(z => [z.id, (z.name || 'Zähler') + (z.einheit ? ' (' + z.einheit + ')' : '')]) : [['', 'bitte unter 2. einen Zähler anlegen']]);
       }
-      if (k.schluessel === 'heizung') h += sel('kosten.' + i + '.verbrauchAnteil', 'Verbrauchsanteil', [['70', '70 % Verbrauch / 30 % Fläche'], ['60', '60 % / 40 %'], ['50', '50 % / 50 %']], { hint: 'Laut Heizkostenverordnung 50–70 % nach Verbrauch.' });
+      if (k.schluessel === 'heizung') h += sel('kosten.' + i + '.verbrauchAnteil', 'Verbrauchsanteil', [['70', '70 % Verbrauch / 30 % Fläche'], ['60', '60 % / 40 %'], ['50', '50 % / 50 %']], { hint: 'Laut Heizkostenverordnung 50–70 % nach Verbrauch. 70 % sind Pflicht bei Öl/Gas, wenn das Haus nicht den Wärmeschutz-Standard von 1994 erfüllt und die freiliegenden Leitungen überwiegend gedämmt sind. Ausnahme: Haus mit max. 2 Wohnungen, eine bewohnt der Vermieter (dann gilt der Mietvertrag).' });
       h += '</div>';
       if (k.schluessel === 'heizung') {
         const co2 = (function () { try { return NK.co2Aufteilung(k, S.einheiten, { tage: (zr() ? Math.round((zr().bis - zr().von) / 864e5) + 1 : 365) }); } catch (e) { return null; } })();
-        h += '<details class="sub"' + (k.co2Kosten ? ' open' : '') + '><summary class="note" style="cursor:pointer">CO2-Kosten aufteilen (Gas/Öl, Pflicht seit 2023)</summary><p class="hint">Bei Heizung mit Gas oder Öl stehen CO2-Kosten und CO2-Menge auf der Brennstoffrechnung. Der Vermieteranteil wird nach dem Stufenmodell (CO2KostAufG) berechnet und von den Heizkosten abgezogen. Bei Fernwärme/Wärmepumpe leer lassen.</p><div class="f">' +
+        h += '<details class="sub"' + (k.co2Kosten ? ' open' : '') + '><summary class="note" style="cursor:pointer">CO2-Kosten aufteilen (Gas, Öl, Fernwärme – Pflicht ab Abrechnungsjahr 2023)</summary><p class="hint">CO2-Menge (kg) und CO2-Kosten (€) stehen auf der Rechnung des Brennstofflieferanten bzw. bei Fernwärme des Wärmelieferanten. Der Vermieteranteil wird nach dem 10-Stufen-Modell (CO2KostAufG) berechnet und vor der Verteilung von den Heizkosten abgezogen. Bei Wärmepumpe, Holz oder Pellets in der Regel leer lassen. Wenn ein Messdienst (Techem, ista …) abrechnet, ist die Aufteilung meist schon in dessen Abrechnung enthalten.</p><div class="f">' +
           inp('kosten.' + i + '.co2Kosten', 'CO2-Kosten laut Rechnung €', { num: true, rr: 'k4' }) + inp('kosten.' + i + '.co2Kg', 'CO2-Ausstoß kg', { num: true, rr: 'k4' }) +
           inp('kosten.' + i + '.co2Flaeche', 'Wohnfläche Gebäude m² (optional)', { num: true, rr: 'k4', ph: 'Summe der Wohnungen' }) + '</div>' +
           (co2 ? '<p class="okbox" style="margin:8px 0 0">' + NK.zahl(co2.kgm2, 1) + ' kg CO2/m² · Stufe ' + co2.stufe + ' → Vermieter trägt ' + co2.vProz + ' % = ' + NK.eur(co2.vermieter) + '</p>' : '') + '</details>';
