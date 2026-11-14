@@ -4,7 +4,7 @@
 <meta name="description" content="Nebenkostenabrechnung für Ihre Mieter direkt im Browser erstellen: Wohnfläche, Personen, Verbrauch, Heizkosten, Mieterwechsel. Kostenlos rechnen, PDF für 14,90 €.">
 <link rel="canonical" href="https://nk-abrechner.de/app.html">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="style.css?v=1">
+<link rel="stylesheet" href="style.css?v=2">
 </head>
 <body class="app">
 <header class="top"><div class="wrap"><a class="logo" href="/">NK-<span>Abrechner</span></a>
@@ -16,6 +16,7 @@
     <button class="btn small sec" id="bExport" type="button">Daten sichern (Datei)</button>
     <label class="btn small sec" style="margin:0">Daten laden<input type="file" id="fImport" accept=".json,application/json" hidden></label>
   </div>
+  <div class="okbox" style="margin-bottom:14px">🔒 <b>Ihre Mieter- und Kostendaten bleiben auf diesem Gerät.</b> Sie werden nur in Ihrem Browser gespeichert und nicht an uns übertragen. Wir speichern nur beim Kauf, was wir müssen (Name, E-Mail, Adresse des Hauses + Jahr für den Freischaltcode). <a href="so-funktionierts.html">So funktioniert's &amp; Datenschutz</a></div>
   <div id="demoHinweis" class="warnbox hidden" style="margin-bottom:14px">Sie sehen ein <b>Beispiel</b> mit erfundenen Daten. Schauen Sie sich unten das Ergebnis und das Muster-PDF an – mit „Neu beginnen“ geben Sie Ihre eigenen Daten ein.</div>
 
   <details class="step" id="s1" open><summary><span class="nr">1</span>Vermieter, Objekt &amp; Zeitraum<span class="info" id="i1"></span></summary><div class="body" id="b1"></div></details>
@@ -29,7 +30,7 @@
   </div></details>
   <p class="note">Hinweis: Der Rechner verteilt Ihre Kosten nach den gewählten Schlüsseln und erstellt die Abrechnung. Ob eine Kostenart umlagefähig und im Mietvertrag vereinbart ist, prüfen Sie bitte selbst (Betriebskostenverordnung). Keine Rechtsberatung.</p>
 </div></main>
-<footer><div class="wrap"><a href="impressum.html">Impressum</a><a href="datenschutz.html">Datenschutz</a><a href="agb.html">AGB</a><a href="widerruf.html">Widerrufsbelehrung</a><a href="mailto:kontakt@nk-abrechner.de">kontakt@nk-abrechner.de</a>
+<footer><div class="wrap"><a href="so-funktionierts.html">So funktioniert's &amp; Datenschutz</a><a href="impressum.html">Impressum</a><a href="datenschutz.html">Datenschutz</a><a href="agb.html">AGB</a><a href="widerruf.html">Widerrufsbelehrung</a><a href="mailto:kontakt@nk-abrechner.de">kontakt@nk-abrechner.de</a>
 <br><br>Alle Preise Endpreise; gemäß § 19 UStG wird keine Umsatzsteuer berechnet.</div>
 <div style="text-align:center;margin:18px 0 6px"><a href="widerrufen.html" style="display:inline-block;padding:9px 18px;border:1.5px solid currentColor;border-radius:999px;font-weight:700;text-decoration:none">Vertrag widerrufen</a></div></footer>
 <script src="config.js?v=1"></script>
@@ -37,5 +38,5 @@
 <script src="vendor/jspdf.umd.min.js" defer></script>
 <script src="vendor/jspdf.plugin.autotable.min.js" defer></script>
 <script src="pdf.js?v=1" defer></script>
-<script src="app.js?v=1" defer></script>
+<script src="app.js?v=2" defer></script>
 </body></html>

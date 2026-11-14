@@ -231,6 +231,7 @@
     box.innerHTML = '<div class="pay"><span class="badge">Für Ihre eigenen Daten</span><h3 style="margin-top:10px">Abrechnungen ohne Wasserzeichen</h3>' +
       '<div class="preis">' + preis + ' € <small class="note">einmalig je Objekt und Abrechnungsjahr</small></div>' +
       '<ul class="checks"><li>Fertige PDF-Abrechnung für jeden Mieter (inkl. Erläuterung der Schlüssel)</li><li>Gesamtübersicht mit Kontrolle für Ihre Unterlagen</li><li>Beliebig oft ändern und neu erstellen</li><li>Kein Abo, keine Anmeldung, Daten bleiben auf Ihrem Gerät</li></ul>' +
+      '<p class="note" style="margin-top:-6px">Der Freischaltcode gilt für dieses Haus (Adresse) und dieses Abrechnungsjahr – beliebig viele Mieter, Änderungen und PDFs, auch auf mehreren Geräten. <a href="so-funktionierts.html#code" target="_blank">Alles zum Code</a></p>' +
       (alt ? '<div class="warnbox" style="margin-bottom:10px">Ihre Freischaltung (' + esc(S.lizenz.code) + ') gilt für eine andere Adresse oder ein anderes Jahr. Haben Sie nur einen Tippfehler korrigiert? Dann unten den Code erneut prüfen.</div>' : '') +
       (S.demo ? '<p class="note">Sie sehen gerade das Beispiel. Tippen Sie oben auf „Neu beginnen“ und tragen Sie Ihr Haus ein – rechnen und das Muster-PDF ansehen ist kostenlos.</p>' :
       '<div id="payForm"><label class="lbl">Ihr Name</label><input type="text" id="pName" autocomplete="name" value="' + esc(S.vermieter.name || '') + '">' +
@@ -313,6 +314,7 @@
       const out = NKPDF.erstelle(S, frei, nur === 'alle' ? null : +nur);
       const name = frei ? out.name : out.name.replace('.pdf', '_MUSTER.pdf');
       out.doc.save(name);
+      if (S.ungesichert !== false || !S.gesichertAm) setTimeout(() => sicherungsDialog(frei), 600);
     } catch (e) { alert('PDF konnte nicht erstellt werden: ' + e.message); }
   }
 
@@ -326,7 +328,8 @@
     setPath(S, p, t.value);
     if (p === 'objekt.strasse' && S.demo) { delete S.demo; $('demoHinweis').classList.add('hidden'); }
     funnel('3 Formular begonnen');
-    save(); info(); bald();
+    if (!S.demo) S.ungesichert = true;
+    save(); info(); bald(); sicherungsHinweis();
   });
   document.addEventListener('change', e => {
     const t = e.target;
@@ -369,16 +372,40 @@
     if (hatEigeneDaten() && !S.demo && !confirm('Alle Eingaben löschen und neu beginnen?')) return;
     const liz = S.lizenz; S = NK.leer(); if (liz) S.lizenz = liz; start(); $('s1').open = true; $('s1').scrollIntoView({ behavior: 'smooth' });
   });
-  $('bExport').addEventListener('click', () => {
+  function sichern() {
+    S.ungesichert = false; S.gesichertAm = new Date().toISOString();
     const blob = new Blob([JSON.stringify(S, null, 1)], { type: 'application/json' });
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
     a.download = 'NK-Abrechner_' + (S.objekt.strasse || 'Daten').replace(/[^\wäöüÄÖÜß-]+/g, '_') + '_' + String(S.zeitraum.bis).slice(0, 4) + '.json';
     document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
-  });
+    save(); sicherungsHinweis();
+  }
+  $('bExport').addEventListener('click', sichern);
+  function sicherungsHinweis() {
+    const b = $('bExport'); if (!b) return;
+    const offen = !S.demo && S.ungesichert && hatEigeneDaten();
+    b.innerHTML = 'Daten sichern (Datei)' + (offen ? ' <span style="color:var(--acc2)" title="Änderungen noch nicht als Datei gesichert">●</span>' : '');
+  }
+  function sicherungsDialog(frei) {
+    if (S.demo || !hatEigeneDaten() || document.getElementById('nkModal')) return;
+    const d = document.createElement('div'); d.id = 'nkModal';
+    d.innerHTML = '<div class="modalbox" role="dialog" aria-modal="true" aria-labelledby="mTitel">' +
+      '<h3 id="mTitel">' + (frei ? '✓ PDF erstellt' : '✓ Muster-PDF erstellt') + ' – jetzt Ihre Daten sichern?</h3>' +
+      '<p>Ihre Eingaben liegen <b>nur in diesem Browser</b> auf diesem Gerät – wir haben keine Kopie. Mit einer Sicherungsdatei können Sie später, auf einem anderen Gerät oder nächstes Jahr einfach weitermachen („Daten laden“).</p>' +
+      '<p class="note">Die Datei enthält Ihre Mieterdaten. Bitte bewahren Sie sie sicher auf (z. B. bei Ihren Vermietungsunterlagen) und geben Sie sie nicht weiter.</p>' +
+      '<div class="dl"><button class="btn" type="button" id="mSichern">Daten-Datei speichern</button><button class="btn sec" type="button" id="mSpaeter">Später</button></div>' +
+      '<p class="note" style="margin-top:10px"><a href="so-funktionierts.html#daten" target="_blank">Wie funktioniert das genau?</a></p></div>';
+    document.body.appendChild(d);
+    const zu = () => d.remove();
+    d.addEventListener('click', e => { if (e.target === d) zu(); });
+    document.getElementById('mSichern').addEventListener('click', () => { sichern(); zu(); });
+    document.getElementById('mSpaeter').addEventListener('click', zu);
+    document.getElementById('mSichern').focus();
+  }
   $('fImport').addEventListener('change', e => {
     const f = e.target.files[0]; if (!f) return;
     const rd = new FileReader();
-    rd.onload = () => { try { const x = JSON.parse(rd.result); if (!x || x.v !== 1 || !Array.isArray(x.einheiten)) throw new Error(); S = x; start(); } catch (err) { alert('Die Datei ist keine gültige Sicherung des NK-Abrechners.'); } };
+    rd.onload = () => { try { const x = JSON.parse(rd.result); if (!x || x.v !== 1 || !Array.isArray(x.einheiten)) throw new Error(); S = x; S.ungesichert = false; start(); } catch (err) { alert('Die Datei ist keine gültige Sicherung des NK-Abrechners.'); } };
     rd.readAsText(f); e.target.value = '';
   });
   function hatEigeneDaten() { return S.kosten.some(k => NK.numRaw(k.betrag)) || S.mieter.some(m => m.name); }
@@ -387,7 +414,7 @@
     S.optionen = S.optionen || { leerstandPersonen: true, zahlungsziel: 30, anpassungAb: '' };
     S.zaehler = S.zaehler || [];
     $('demoHinweis').classList.toggle('hidden', !S.demo);
-    r1(); r2(); r3(); r4(); save(); rechne();
+    r1(); r2(); r3(); r4(); save(); rechne(); sicherungsHinweis();
   }
 
   S = load();
